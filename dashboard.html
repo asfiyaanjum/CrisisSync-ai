@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Dashboard</title>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: #f1f5f9;
+        margin: 0;
+        text-align: center;
+      }
+
+      /* 🔷 NAVBAR */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 12px 30px;
+
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      .logo {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1e293b;
+      }
+
+      .nav-links a {
+        margin: 0 12px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .nav-links a:hover {
+        color: #2563eb;
+      }
+      .toggle-btn {
+        background: #e2e8f0;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        width: auto;
+      }
+
+      .toggle-btn:hover {
+        background: #cbd5e1;
+      }
+      .dark {
+        background: #1e1e1e;
+        color: white;
+      }
+
+      .dark .container {
+        background: #2c2c2c;
+      }
+
+      .dark input {
+        background: #333;
+        color: white;
+        border: 1px solid #555;
+      }
+
+      .dark #output {
+        color: white;
+      }
+      h1 {
+        margin-top: 25px;
+        color: #1e293b;
+      }
+
+      /* 🔷 CARD (UPGRADED ONLY UI) */
+      .card {
+        background: white;
+        padding: 18px;
+        margin: 15px auto;
+        width: 420px;
+
+        border-radius: 16px;
+        border-left: 6px solid #2563eb;
+        text-align: left;
+
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transition: 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="logo">🚨 CrisisSync AI</div>
+    <!-- 🔷 NAVBAR -->
+    <div class="navbar">
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <button onclick="toggleDarkMode()" class="toggle-btn">🌙</button>
+    </div>
+    <h1>🚨 Admin Dashboard</h1>
+
+    <div id="alerts"></div>
+
+    <script>
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark");
+      }
+      async function load() {
+        const res = await fetch("/alerts");
+        const data = await res.json();
+
+        let html = "";
+
+        data
+          .slice()
+          .reverse()
+          .forEach((a) => {
+            html += `
+        <div class="card">
+          <b>${a.type}</b> (${a.priority}) [${a.status}]<br>
+          👤 ${a.name}<br>
+          📍 ${a.location}<br>
+          💬 ${a.message}<br>
+          🕒 ${a.time}<br>
+          <i>${a.suggestion}</i><br><br>
+
+          ${
+            a.status === "Active"
+              ? `<button onclick="resolve(${a.id})">Mark Resolved</button>`
+              : `<span style="color:green;">✔ Resolved</span>`
+          }
+        </div>
+        `;
+          });
+
+        document.getElementById("alerts").innerHTML = html;
+      }
+
+      async function resolve(id) {
+        await fetch("/resolve/" + id, { method: "POST" });
+        load();
+      }
+
+      setInterval(load, 3000);
+      load();
+    </script>
+  </body>
+</html>
