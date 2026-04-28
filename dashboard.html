@@ -120,8 +120,28 @@
         document.body.classList.toggle("dark");
       }
       async function load() {
-        const res = await fetch("/alerts");
-        const data = await res.json();
+        const data = [
+  {
+    type: "Fire Emergency",
+    priority: "High",
+    status: "Active",
+    name: "Hania",
+    location: "Living Room",
+    message: "Smoke detected",
+    time: new Date().toLocaleTimeString(),
+    suggestion: "Call fire services immediately"
+  },
+  {
+    type: "Medical Emergency",
+    priority: "Medium",
+    status: "Resolved",
+    name: "Henry",
+    location: "Bedroom",
+    message: "Severe chest pain",
+    time: new Date().toLocaleTimeString(),
+    suggestion: "Call ambulance"
+  }
+];
 
         let html = "";
 
