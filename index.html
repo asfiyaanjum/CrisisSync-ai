@@ -225,23 +225,18 @@
       }
 
       /* 🚨 Send Alert */
-      async function sendAlert(msg) {
-        const name = document.getElementById("name").value || "Guest";
-        const location = document.getElementById("location").value || "Unknown";
+      function sendAlert(msg) {
+  let type = "General Emergency";
 
-        const res = await fetch("/alert", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg, name, location }),
-        });
+  if (msg.toLowerCase().includes("smoke")) type = "Fire Emergency";
+  else if (msg.toLowerCase().includes("pain")) type = "Medical Emergency";
+  else if (msg.toLowerCase().includes("thief")) type = "Security Threat";
 
-        const data = await res.json();
+  document.getElementById("output").innerText =
+    type + " | Stay calm and take action";
 
-        document.getElementById("output").innerText =
-          data.type + " | " + data.suggestion;
-
-        showPopup();
-      }
+  showPopup();
+}
 
       /* 🚨 Panic */
       function triggerPanic() {
